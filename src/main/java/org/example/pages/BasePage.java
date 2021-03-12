@@ -68,10 +68,11 @@ public abstract class BasePage {
      * @return select
      */
     private By parseSelector(String stringSelector) {
-        stringSelector = StringUtils.strip(stringSelector, "(");
-        stringSelector = StringUtils.strip(stringSelector, ")");
+        String selectorMatcher = stringSelector;
+        selectorMatcher = StringUtils.strip(selectorMatcher, "(");
+        selectorMatcher = StringUtils.strip(selectorMatcher, ")");
 
-        if (stringSelector.startsWith("/") || stringSelector.startsWith("./")) {
+        if (selectorMatcher.startsWith("/") || selectorMatcher.startsWith("./")) {
             return By.xpath(stringSelector);
         } else return By.cssSelector(stringSelector);
     }
