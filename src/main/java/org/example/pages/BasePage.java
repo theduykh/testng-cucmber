@@ -1,7 +1,5 @@
 package org.example.pages;
 
-import lombok.Getter;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -12,13 +10,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class BasePage {
-    private final int TIMEOUT = 30;
-
     private final Logger logger = LogManager.getLogger(BasePage.class);
-    private final WebDriverWait wait;
 
-    @Getter
+    private final int TIMEOUT = 30; // in second
+
     private final WebDriver driver;
+
+    private final WebDriverWait wait;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
@@ -62,18 +60,24 @@ public abstract class BasePage {
     }
 
     /**
-     * Parse string to selector automatically
+     * Parse string to CSS selector or Xpath automatically
      *
-     * @param stringSelector css selector or xpath
+     * @param locator css selector or xpath
      * @return select
      */
-    private By parseSelector(String stringSelector) {
-        String selectorMatcher = stringSelector;
-        selectorMatcher = StringUtils.strip(selectorMatcher, "(");
-        selectorMatcher = StringUtils.strip(selectorMatcher, ")");
+    private By parseSelector(String locator) {
+        String temp = locator;
+        while (temp.startsWith("(")) {
+            temp = temp.substring(1);
+        }
+        if (temp.startsWith("/") || temp.startsWith("./")) {
+            return By.xpath(locator);
+        } else {
+            return By.cssSelector(locator);
+        }
+    }
 
-        if (selectorMatcher.startsWith("/") || selectorMatcher.startsWith("./")) {
-            return By.xpath(stringSelector);
-        } else return By.cssSelector(stringSelector);
+    public WebDriver getDriver() {
+        return driver;
     }
 }
